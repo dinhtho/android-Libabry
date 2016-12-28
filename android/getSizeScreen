@@ -1,0 +1,6 @@
+ Display display=getWindowManager().getDefaultDisplay();
+
+        String width=String.valueOf(display.getWidth());
+        String height=String.valueOf(display.getHeight());
+
+        Toast.makeText(MainActivity.this,"Width="+width+",Height="+height,Toast.LENGTH_SHORT).show();

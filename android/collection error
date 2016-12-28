@@ -1,0 +1,3 @@
+Caused by: android.os.NetworkOnMainThreadException 
+
+Tạo class moi hoac AyncTask ngoài main

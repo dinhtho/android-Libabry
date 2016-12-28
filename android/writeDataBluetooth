@@ -1,0 +1,96 @@
+package com.idevicesinc.sweetblue.hello_ble;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+
+import com.idevicesinc.sweetblue.BleDevice;
+import com.idevicesinc.sweetblue.BleDeviceState;
+import com.idevicesinc.sweetblue.BleManager;
+import com.idevicesinc.sweetblue.utils.BluetoothEnabler;
+
+import java.util.UUID;
+
+import static android.content.ContentValues.TAG;
+
+
+public class MyActivity extends Activity
+
+{
+	private static final String uuid= "0000fff1-0000-1000-8000-00805f9b34fb";
+	private static final UUID MY_UUID = UUID.fromString(uuid);			// NOTE: Replace with your actual UUID.
+
+	private static final String serviceuuid= "0000fff0-0000-1000-8000-00805f9b34fb";
+	private static final UUID MY_SERVIC_UUID = UUID.fromString(serviceuuid);			// NOTE: Replace with your actual UUID.
+
+
+	private static final byte[] MY_DATA = {(byte) 0x9};		//  NOTE: Replace with your actual data, not 0xC0FFEE
+
+	private BleManager m_bleManager;
+
+	@Override protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+
+		BluetoothEnabler.start(this);
+
+		m_bleManager = BleManager.get(this);
+
+		m_bleManager.startScan(new BleManager.DiscoveryListener()
+		{
+			@Override public void onEvent(DiscoveryEvent event) {
+
+				Log.i(TAG, "onEvent: "+"ten cua thiet bi"+event.device().getName_native());
+				//m_bleManager.stopScan();
+				String name="iPhone";
+				boolean soSanh=name.equals(event.device().getName_native());
+				Log.i(TAG, "onEvent: "+"sosanh"+soSanh);
+
+				if (soSanh) {
+					m_bleManager.stopScan();
+
+					if (event.was(LifeCycle.DISCOVERED)) {
+						event.device().connect(new BleDevice.StateListener() {
+							@Override
+							public void onEvent(StateEvent event) {
+								if (event.didEnter(BleDeviceState.INITIALIZED)) {
+									Log.i("SweetBlueExample", event.device().getName_debug() + " just initialized!");
+
+									
+									event.device().write(MY_SERVIC_UUID, MY_UUID, MY_DATA, new BleDevice.ReadWriteListener() {
+										@Override
+										public void onEvent(ReadWriteEvent event) {
+											if (event.wasSuccess()) {
+												Log.i("", "Write successful");
+											} else {
+												Log.i(TAG, "onEvent: "+event);
+												Log.e("log la", event.status().toString()); // Logs the reason why it failed.
+												Log.i(TAG, "onEvent: "+MY_UUID.toString());
+											}
+										}
+									});
+								}
+							}
+						});
+					}
+				}
+			}
+		});
+	}
+
+	@Override protected void onResume()
+	{
+		super.onResume();
+
+		m_bleManager.onResume();
+	}
+
+	@Override protected void onPause()
+	{
+		super.onPause();
+
+		m_bleManager.onPause();
+	}
+}
+
+

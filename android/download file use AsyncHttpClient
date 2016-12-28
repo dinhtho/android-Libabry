@@ -1,0 +1,100 @@
+package com.example.dinhtho.demoasynchttpclient;
+
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
+
+import java.io.File;
+
+import cz.msebera.android.httpclient.Header;
+
+public class MainActivity extends AppCompatActivity {
+
+    //private static String TAG = "MainActivity";
+    //declare pageview
+    //private ViewPager mPager;
+
+
+    //private MainActivity mainActivity;
+    public final static int REQUEST_CODE = 0x11;
+    //public static File path_file = null;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+
+
+
+
+
+        String[] permissions_camera = {Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET};
+        requestPermissions(permissions_camera, REQUEST_CODE);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+
+
+
+                AsyncHttpClient client=new AsyncHttpClient();
+                //String[] allowedTypes = new String[] { "video/mkv" };
+                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+
+
+                client.get("http://trailers.divx.com/divx_prod/profiles/WiegelesHeliSki_DivXPlus_19Mbps.mkv", new FileAsyncHttpResponseHandler(file) {
+
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, File file) {
+
+                    }
+
+
+
+
+                });
+
+
+
+
+
+
+
+                // save file
+                //Create_Folder("Predict");
+                Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(getApplicationContext(), "PERMISSION_DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+}

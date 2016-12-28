@@ -1,0 +1,23 @@
+       
+/// Main----------->Screen2
+btnGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mh2=new Intent(MainActivity.this,ManHinh2.class);
+                startActivity(mh2);
+
+            }
+        });
+
+
+///// Screen2------------>Main
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mh1=new Intent(ManHinh2.this,MainActivity.class);
+                startActivity(mh1);
+
+            }
+        });
+
